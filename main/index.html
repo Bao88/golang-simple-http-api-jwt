@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="/scripts/main.js"></script>
+    <title>Project 2</title>
+</head>
+
+<body>
+    <h1>Login</h1>
+    <form id="loginForm" method="post" action="/login">
+        <label for="name">User name</label>
+        <input type="text" id="name" name="name">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password">
+        <button type="submit">Login</button>
+    </form>
+
+    <form id="invoiceForm" method="post" action="/invoice">
+
+        <h1>Simple Invoice Form </h1>
+        <h2>Customer</h2>
+        <label for="iname">User name</label>
+        <input type="text" id="iname" name="iname">
+        <label for="address">Address</label>
+        <input type="text" id="address" name="address">
+        <label for="iPostalCode">Postal Code</label>
+        <input type="text" id="iPostalCode" name="iPostalCode">
+        <label for="iPostalPlace">Postal Place</label>
+        <input type="text" id="iPostalPlace" name="iPostalPlace">
+        <label for="iCountry">Country</label>
+        <input type="text" id="iCountry" name="iCountry">
+        <label for="iLandline">Landline</label>
+        <input type="text" id="iLandline" name="iLandline">
+        <label for="iPhone">Landline</label>
+        <input type="text" id="iPhone" name="iPhone">
+        <label for="iE-mail">E-mail</label>
+        <input type="text" id="iE-mail" name="iE-mail">
+
+
+        <h2>Invoices
+            <button id="add" type="button" class="">Add+</button>
+        </h2>
+        <div id="lines"></div>
+
+        <button type="submit">Save</button>
+        <button type="reset">Clear</button>
+    </form>
+</body>
+
+</html>

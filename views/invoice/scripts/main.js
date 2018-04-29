@@ -21,7 +21,7 @@ new Vue({
             customText: ""
         },
         customer: {
-            name: '',      
+            name: '',
             address1: "",
             address2: "",
             address3: "",
@@ -88,11 +88,11 @@ new Vue({
     },
     methods: {
         selectCountry(label) {
-            if(label == "Norway"){
+            if (label == "Norway") {
                 this.customer.country = "NO";
                 this.customer.landline = "+47";
                 this.global.currency = "NOK";
-            } else if(label == "Sweden"){
+            } else if (label == "Sweden") {
                 this.customer.country = "SWE";
                 this.customer.landline = "+46";
                 this.global.currency = "SEK";
@@ -101,7 +101,7 @@ new Vue({
                 this.customer.landline = "+45";
                 this.global.currency = "DKK";
             }
-            
+
         },
         submit() {
             if (this.$refs.form.validate()) {
@@ -109,24 +109,42 @@ new Vue({
                 let counter = 1;
                 let json = this.$data.global;
                 // VueJS reactivity would update delivery when we add number to customer object
-                json.delivery = JSON.parse(JSON.stringify( this.$data.customer )); 
+                json.delivery = JSON.parse(JSON.stringify(this.$data.customer));
                 json.customer = this.$data.customer;
-                json.customer.number = "1234567890"; 
-                
+                json.customer.number = "1234567890";
+
                 json.lines = this.$data.invoices;
                 json.lines.map(item => item.number = counter++);
                 console.log(json);
-                fetch('http://localhost:8081/invoice', {
-                    body: "Hello",
-                    method: "POST"
+
+                console.log(document.URL);
+                // axios.post('/invoice', this.$data).then(function (response) {
+                //     // Success
+                //     console.log(response.data)
+                // },function (response) {
+                //     // Error
+                //     console.log(response.data)
+                // });
+                fetch('/invoice', {
+                    body: {stuff: "Hello"},
+                    method: "POST",
+                    headers: {
+                        "content-type": "application/x-www-form-urlencoded"
+                    }
                 })
-                .then(function(response) {
-                    console.log("Here");
-                    return response.json();
-                })
-                .then(function(myJson) {
-                    console.log("Contacted");
+                    .then(function (response) {
+                        return "Hello from me";
+                    })
+                    .then(function (myJson) {
+                        console.log(myJson);
                 });
+                // console.log(this.$refs.form);
+                // let jsonFormData = new FormData();
+                // jsonFormData.set("Testing", "Testing2");
+                // axios.post("/invoice", {"name": "foo", "surname":"bar"})
+                //      .then(response => console.log("OK"));
+                // // this.$refs.form.submit();
+
             }
         },
         clear() {
@@ -143,12 +161,12 @@ new Vue({
         },
         changeNetPrice(index) {
             let currentInvoice = this.invoices[index];
-            currentInvoice.netPrice = currentInvoice.quantity*currentInvoice.unitPrice-(currentInvoice.quantity*currentInvoice.unitPrice*(currentInvoice.discountRate/100));
+            currentInvoice.netPrice = currentInvoice.quantity * currentInvoice.unitPrice - (currentInvoice.quantity * currentInvoice.unitPrice * (currentInvoice.discountRate / 100));
             this.changeTotalNet();
         },
         changeVATAmount(index) {
             let currentInvoice = this.invoices[index];
-            currentInvoice.vatAmount = currentInvoice.netPrice*(currentInvoice.vatRate/100)
+            currentInvoice.vatAmount = currentInvoice.netPrice * (currentInvoice.vatRate / 100)
             this.changeTotalVAT();
         },
 
@@ -165,7 +183,7 @@ new Vue({
             this.ChangeGross();
         },
         ChangeGross() {
-            this.global.gross = Number(this.global.net)+Number(this.global.vat);
+            this.global.gross = Number(this.global.net) + Number(this.global.vat);
         }
     }
 })

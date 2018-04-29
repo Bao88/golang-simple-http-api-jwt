@@ -11,6 +11,7 @@
   <div id="invoice-creator">
     <v-app dark>
       <v-content>
+        <!-- <a href="/login">Login</a> -->
         <v-form v-model="valid" ref="form" lazy-validation>
           <h1>Simple Invoice Form using VueJS and Vuetify for styling</h1>
           <v-container grid-list-xl fluid>
@@ -104,6 +105,9 @@
             <v-btn @click="submit" :disabled="!valid">
               Save
             </v-btn>
+            <!-- <v-btn type="submit" :disabled="!valid">
+                Save
+              </v-btn> -->
             <v-btn @click="clear">clear</v-btn>
           </v-container>
         </v-form>
@@ -113,6 +117,7 @@
 
   <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/vuetify/dist/vuetify.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="scripts/main.js"></script>
 </body>
 
