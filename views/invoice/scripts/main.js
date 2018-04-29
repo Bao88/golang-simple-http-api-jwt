@@ -120,11 +120,11 @@ new Vue({
                 console.log(document.URL);
   
 
-                console.log(JSON.stringify(this.$data));
+                console.log(JSON.stringify(json));
                 $.ajax({
                     type: "POST",
                     url: "/invoice",
-                    data: JSON.stringify(this.$data),
+                    data: JSON.stringify(json),
                     success: function (data) {
                         console.log(data);
                     }
