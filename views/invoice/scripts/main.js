@@ -118,33 +118,17 @@ new Vue({
                 console.log(json);
 
                 console.log(document.URL);
-                // axios.post('/invoice', this.$data).then(function (response) {
-                //     // Success
-                //     console.log(response.data)
-                // },function (response) {
-                //     // Error
-                //     console.log(response.data)
-                // });
-                fetch('/invoice', {
-                    body: {stuff: "Hello"},
-                    method: "POST",
-                    headers: {
-                        "content-type": "application/x-www-form-urlencoded"
+  
+
+                console.log(JSON.stringify(this.$data));
+                $.ajax({
+                    type: "POST",
+                    url: "/invoice",
+                    data: JSON.stringify(this.$data),
+                    success: function (data) {
+                        console.log(data);
                     }
                 })
-                    .then(function (response) {
-                        return "Hello from me";
-                    })
-                    .then(function (myJson) {
-                        console.log(myJson);
-                });
-                // console.log(this.$refs.form);
-                // let jsonFormData = new FormData();
-                // jsonFormData.set("Testing", "Testing2");
-                // axios.post("/invoice", {"name": "foo", "surname":"bar"})
-                //      .then(response => console.log("OK"));
-                // // this.$refs.form.submit();
-
             }
         },
         clear() {

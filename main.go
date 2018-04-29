@@ -117,9 +117,9 @@ func postInvoice(w http.ResponseWriter, r *http.Request){
 
 func main(){
 	fmt.Println("Started")
-	http.Handle("/", http.FileServer(http.Dir("./main")))
+	// http.Handle("/", http.FileServer(http.Dir("./main")))
 	// http.HandleFunc("/", handler)
-	// http.Handle("/", http.FileServer(http.Dir("views/invoice")))
+	http.Handle("/", http.FileServer(http.Dir("views/invoice")))
 	http.HandleFunc("/login", UserLogin)
 	http.HandleFunc("/invoice", postInvoice)
 	// http.Handle("/createInvoice/", http.StripPrefix("/createInvoice/", http.FileServer(http.Dir("views/invoice"))))
