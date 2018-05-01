@@ -112,18 +112,12 @@ new Vue({
                 json.delivery = JSON.parse(JSON.stringify(this.$data.customer));
                 json.customer = this.$data.customer;
                 json.customer.number = "1234567890";
-
+                json.issuer.id = localStorage.getItem("user");
                 json.lines = this.$data.invoices;
                 json.lines.map(item => item.number = counter++);
-                console.log(json);
-
-                console.log(document.URL);
-                
 
                 console.log(JSON.stringify(json));
                 let token = localStorage.getItem("clientToken");
-                // let token = "asdf";
-                console.log(token);
                 $.ajax({
                     type: "POST",
                     url: "/invoice",
@@ -132,13 +126,11 @@ new Vue({
                     },
                     data: JSON.stringify(json),
                     success: function (data) {
-                        // if(data == "Wrong user/password!") alert(data);
                         console.log(data);
                     },
                     error: function (data){
                         alert("Failed to access protected area POST /invoice");
                     }
-                    
                 })
             }
         },

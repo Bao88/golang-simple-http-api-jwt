@@ -88,12 +88,12 @@ func postInvoice(w http.ResponseWriter, r *http.Request){
 }
 
 func main(){
-	fmt.Println("Started")
+	
 	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("main/"))))
 	http.HandleFunc("/login", UserLogin)
 	http.HandleFunc("/invoice", postInvoice)
 	http.Handle("/createInvoice/", http.StripPrefix("/createInvoice/", http.FileServer(http.Dir("views/invoice"))))
 	log.Fatal(http.ListenAndServe(":8000", nil))
-	
+	fmt.Println("Server started. Available at localhost:8000")
 }
 
