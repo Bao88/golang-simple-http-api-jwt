@@ -4,3 +4,6 @@ A simple app where we create a server using Go. The main purpose of the server i
 How to use:
 - Install/download the necessary libraries under "import"
 - Build and run the app with : go build -i && ./golang-simple-http-api-jwt
+
+Things to consider:
+- creating new files each time a user saves his invoice?
