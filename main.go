@@ -8,12 +8,6 @@ import (
 	"io/ioutil"
 )
 
-func Homepage(w http.ResponseWriter, r *http.Request){
-	http.ServeFile(w, r, "views/login/login.html")
-	fmt.Println("Endpoint Hit: homepage")
-	fmt.Println(r.Method);
-}
-
 // source https://gist.github.com/otiai10/22ad21fbe48f37f14c6b2218e9d110a5
 type User struct {
 	Name string `json:"name"`
@@ -40,7 +34,7 @@ func createTokenString() string {
 }
 
 func UserLogin(w http.ResponseWriter, r *http.Request){
-	if r.Method == "POST" {
+	if r.Method == "POST" { // Accepts only POST
 		r.ParseForm()
 
 		name := r.FormValue("name")
@@ -58,7 +52,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request){
 }
 
 func postInvoice(w http.ResponseWriter, r *http.Request){
-	if r.Method == "POST" {
+	if r.Method == "POST" { // Accepts only POST
 		// Test if user is authirized to access this protected area
 		clientToken := r.Header.Get("Authorization")
 
@@ -70,7 +64,8 @@ func postInvoice(w http.ResponseWriter, r *http.Request){
 		if token.Valid {
 			// Autorization success, store json to file
 			r.ParseForm()
-			// Executes only once
+			// We only wants the key, which is the JSON element
+			// Surely there are a better way to access the key only without using a for loop and range.
 			for k := range r.Form {
 				fmt.Println(k)
 				err = ioutil.WriteFile("output.txt", []byte(k), 0644)
@@ -88,12 +83,12 @@ func postInvoice(w http.ResponseWriter, r *http.Request){
 }
 
 func main(){
-	
+	// Routing
+	fmt.Println("Server started. Available at localhost:8000")
 	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("main/"))))
 	http.HandleFunc("/login", UserLogin)
 	http.HandleFunc("/invoice", postInvoice)
 	http.Handle("/createInvoice/", http.StripPrefix("/createInvoice/", http.FileServer(http.Dir("views/invoice"))))
 	log.Fatal(http.ListenAndServe(":8000", nil))
-	fmt.Println("Server started. Available at localhost:8000")
 }
 
