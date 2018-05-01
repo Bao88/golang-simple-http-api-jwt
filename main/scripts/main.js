@@ -49,7 +49,14 @@ $(document).ready(function(){
             url: "/login",
             data: $("#loginForm").serialize(),
             success: function(data){
-                console.log(data);
+                if(data == "Fail") alert("Wrong username/password!");
+                else {
+                    console.log(data);
+                    localStorage.setItem("clientToken", data);
+                    window.location.replace("/createInvoice");
+                    // window.location.href = 'newPage.html';
+                }
+                // console.log("here");
             }
         })
     });

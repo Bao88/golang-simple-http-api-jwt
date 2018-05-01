@@ -4,126 +4,96 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	// "github.com/dgrijalva/jwt-go"
-	"strings"
-	// "encoding/json"
+	"github.com/dgrijalva/jwt-go"
+	"io/ioutil"
 )
 
-// type Users struct {
-// 	Name string 'json:"Name"'
-// 	Password string 'json:"Password"'
-// }
-
-// type Users []User
-
-func handler(w http.ResponseWriter, req *http.Request) {
-	enableCors(&w)
-	Homepage(w, req)
-}
-
-func enableCors(w *http.ResponseWriter) {
-	(*w).Header().Set("Access-Control-Allow-Origin", "*")
-}
-
 func Homepage(w http.ResponseWriter, r *http.Request){
-
 	http.ServeFile(w, r, "views/login/login.html")
 	fmt.Println("Endpoint Hit: homepage")
 	fmt.Println(r.Method);
 }
 
-// func handleRequests() {
-// 	// http.HandleFunc("/", homePage)
-// 	// Serve the Invoice form to clients
-// 	http.Handle("/", http.FileServer(http.Dir("./views/invoice")))
-	
-// 	log.Fatal(http.ListenAndServe(":8081", nil))
-// }
+// source https://gist.github.com/otiai10/22ad21fbe48f37f14c6b2218e9d110a5
+type User struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
+	jwt.StandardClaims
+}
 
+const user = "test"
+const password ="test"
+const userAge = 30
 
+func createTokenString() string {
+	// Embed User information to `token`
+	token := jwt.NewWithClaims(jwt.GetSigningMethod("HS256"), &User{
+		Name: user,
+		Age: userAge,
+	})
+	// token -> string. Only server knows this secret (foobar).
+	tokenstring, err := token.SignedString([]byte("foobar"))
+	if err != nil {
+		log.Fatalln(err)
+	}
+	return tokenstring
+}
 
 func UserLogin(w http.ResponseWriter, r *http.Request){
-	// fmt.Fprintf(w, "Welcome to the UserLogin!")
-	fmt.Println("Implement UserLogin")
-	fmt.Println(r.Method);
-	fmt.Println(r.Body);
-	fmt.Println(r);
-	r.ParseForm()
+	if r.Method == "POST" {
+		r.ParseForm()
 
-	fmt.Println(r.Form) // print information on server side.
-    fmt.Println("path", r.URL.Path)
-    fmt.Println("scheme", r.URL.Scheme)
-    fmt.Println(r.Form["url_long"])
-    for k, v := range r.Form {
-        fmt.Println("key:", k)
-        fmt.Println("val:", strings.Join(v, ""))
+		name := r.FormValue("name")
+		pass := r.FormValue("password")
+		if name == user && password == pass {
+			// Create token and send it back
+			tokenstring := createTokenString() 
+			fmt.Fprintf(w, tokenstring)
+		} else {
+			fmt.Fprintf(w, "Fail")
+		}
+	} else {
+		fmt.Fprintf(w, "Currently supporting only POST /login")
 	}
-	fmt.Fprintf(w, "Welcome to the UserLogin!")
-    // fmt.Fprintf(w, "Hello OK!") // write data to response
-	// http.Redirect("/createInvoice")
-	// http.ServeFile(w, r, "./views/invoice/index.html")
-	// http.ServeFile(w, r, "./views/invoice/scripts/main.js")
-	// http.FileServer(http.Dir("./views/invoice/scripts"))
-	// http.Redirect(w, r, "/createInvoice", 302)
-}
-
-func CreateInvoice(w http.ResponseWriter, r *http.Request){
-	fmt.Fprintf(w, "Welcome to the CreateInvoice!")
-	fmt.Println("Implement CreateInvoice")
-	fmt.Println(r.Method);
-}
-
-type myData struct {
-	Owner string
-	Name  string
 }
 
 func postInvoice(w http.ResponseWriter, r *http.Request){
+	if r.Method == "POST" {
+		// Test if user is authirized to access this protected area
+		clientToken := r.Header.Get("Authorization")
 
+		token, err := jwt.Parse(clientToken, func(token *jwt.Token) (interface{}, error) {
+			return []byte("foobar"), nil
+		})
+		// log.Println(token.Claims, err)
 
-	fmt.Fprintf(w, "Welcome to the PostInvoice!")
-	fmt.Println("Implement PostInvoice")
-	// fmt.Println(r.Method);
-	// fmt.Println(r.Body);
-	// fmt.Println(r);
-
-	// r.ParseForm()
-
-	// fmt.Println(r.Form) // print information on server side.
-    // fmt.Println("path", r.URL.Path)
-    // fmt.Println("scheme", r.URL.Scheme)
-    // fmt.Println(r.Form["url_long"])
-    // for k, v := range r.Form {
-    //     fmt.Println("key:", k)
-    //     fmt.Println("val:", strings.Join(v, ""))
-	// }
-	// fmt.Println(r.Form)
-	// fmt.Println("Implement UserLogin")
-	fmt.Println(r.Method);
-	fmt.Println(r.Body);
-	fmt.Println(r);
-	r.ParseForm()
-
-	fmt.Println(r.Form) // print information on server side.
-    fmt.Println("path", r.URL.Path)
-    fmt.Println("scheme", r.URL.Scheme)
-    fmt.Println(r.Form["url_long"])
-    for k, v := range r.Form {
-        fmt.Println("key:", k)
-        fmt.Println("val:", strings.Join(v, ""))
+		if token.Valid {
+			// Autorization success, store json to file
+			r.ParseForm()
+			// Executes only once
+			for k := range r.Form {
+				fmt.Println(k)
+				err = ioutil.WriteFile("output.txt", []byte(k), 0644)
+				if err != nil {
+					panic(err)
+				}
+			}
+		} else {
+			w.WriteHeader(http.StatusBadRequest)
+			fmt.Fprintf(w, "JWT Autorization failed")
+		}	
+	} else {
+		fmt.Fprintf(w, "Currently supporting POST /invoice only")
 	}
-	// fmt.Fprintf(w, "Welcome to the UserLogin!")
 }
 
 func main(){
 	fmt.Println("Started")
-	// http.Handle("/", http.FileServer(http.Dir("./main")))
-	// http.HandleFunc("/", handler)
-	http.Handle("/", http.FileServer(http.Dir("views/invoice")))
+	http.Handle("/", http.StripPrefix("/", http.FileServer(http.Dir("main/"))))
 	http.HandleFunc("/login", UserLogin)
 	http.HandleFunc("/invoice", postInvoice)
-	// http.Handle("/createInvoice/", http.StripPrefix("/createInvoice/", http.FileServer(http.Dir("views/invoice"))))
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	http.Handle("/createInvoice/", http.StripPrefix("/createInvoice/", http.FileServer(http.Dir("views/invoice"))))
+	log.Fatal(http.ListenAndServe(":8000", nil))
 	
 }
 

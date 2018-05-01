@@ -118,16 +118,27 @@ new Vue({
                 console.log(json);
 
                 console.log(document.URL);
-  
+                
 
                 console.log(JSON.stringify(json));
+                let token = localStorage.getItem("clientToken");
+                // let token = "asdf";
+                console.log(token);
                 $.ajax({
                     type: "POST",
                     url: "/invoice",
+                    headers: {
+                        "Authorization": token
+                    },
                     data: JSON.stringify(json),
                     success: function (data) {
+                        // if(data == "Wrong user/password!") alert(data);
                         console.log(data);
+                    },
+                    error: function (data){
+                        alert("Failed to access protected area POST /invoice");
                     }
+                    
                 })
             }
         },
